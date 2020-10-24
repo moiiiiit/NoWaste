@@ -10,9 +10,10 @@ import { StackActions } from "@react-navigation/native";
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
-const Item = ({ title }) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
+const Item = ({ name,quant }) => (
+  <View>
+    <Text>{name}</Text>
+    <Text>{quant}</Text>
   </View>
 );
 
@@ -22,15 +23,18 @@ export default class Login extends React.Component {
     data: [
       {
         id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-        title: "First Item",
+        name: "First Item",
+        quantity: 2
       },
       {
         id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-        title: "Second Item",
+        name: "Second Item",
+        quantity: 2
       },
       {
         id: "58694a0f-3da1-471f-bd96-145571e29d72",
-        title: "Third Item",
+        name: "Third Item",
+        quantity: 1
       },
     ],
   };
@@ -41,7 +45,7 @@ export default class Login extends React.Component {
         <View>
           <FlatList
             data={this.state.data}
-            renderItem={({ item }) => <Item title={item.title} />}
+            renderItem={({ item }) => <Item name={item.name} quant={item.quantity} />}
             keyExtractor={(item) => item.id}
           />
         </View>

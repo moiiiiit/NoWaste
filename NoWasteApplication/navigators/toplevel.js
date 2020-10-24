@@ -8,7 +8,7 @@ const Stack = createStackNavigator();
 
 export default function  MyStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator style={{backgroundColor: "#fff"}}>
       <Stack.Screen name="LoginStack" component={LoginPage} options={{headerShown:false}}/>
       <Stack.Screen name="MainStack" component={MainStack} options={{headerShown:false}}/>
     </Stack.Navigator>

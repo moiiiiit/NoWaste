@@ -3,15 +3,17 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import TopLevel from "./navigators/toplevel.js";
+import LoginScreen from "../screens/login.js";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <TopLevel/>
-    </NavigationContainer>
+    <Tab.Navigator>
+      <Tab.Screen name="List" component={LoginScreen} />
+      <Tab.Screen name="Shelf" component={LoginScreen} />
+      <Tab.Screen name="Profile" component={LoginScreen} />
+    </Tab.Navigator>
   );
 }
 

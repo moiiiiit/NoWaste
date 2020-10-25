@@ -1,18 +1,21 @@
 import Constants from "expo-constants";
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   FlatList,
   Dimensions,
+  SafeAreaView,
   TouchableOpacity,
   TextInput,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import Icon from "react-native-vector-icons/AntDesign";
 import { Input, Button, Overlay } from "react-native-elements";
 import { FloatingAction } from "react-native-floating-action";
 import { StackActions } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from '@react-native-community/datetimepicker';
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
@@ -24,27 +27,33 @@ const Item = ({ name, quant }) => (
   </View>
 );
 
-export default class ShoppingList extends React.Component {
-  state = {
-    data: [
-      {
-        id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-        name: "Tomato",
-        quantity: 3,
-      },
-      {
-        id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-        name: "Potato",
-        quantity: 2,
-      },
-      {
-        id: "58694a0f-3da1-471f-bd96-145571e29d72",
-        name: "Cucumber",
-        quantity: 1,
-      },
-    ],
-    visible: false,
-  };
+
+export default class Shelf extends React.Component {
+    constructor(props){
+        super(props)
+        this.state={
+            data: [
+              {
+                id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
+                name: "Tomato",
+                quantity: 3,
+              },
+              {
+                id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
+                name: "Potato",
+                quantity: 2,
+              },
+              {
+                id: "58694a0f-3da1-471f-bd96-145571e29d72",
+                name: "Cucumber",
+                quantity: 1,
+              },
+            ],
+            showOverlay: false,
+            showDatePicker: false,
+            date: Date.now()
+          };
+    }
 
   renderItem = ({ item, number }) => (
     <View
@@ -61,6 +70,7 @@ export default class ShoppingList extends React.Component {
       <View>
         <Text>{item.name}</Text>
         <Text style={{ color: "grey" }}>Quantity: {item.quantity}</Text>
+        <Text style={{ color: "grey" }}>20 June 1999</Text>
       </View>
 
       <View
@@ -96,9 +106,9 @@ export default class ShoppingList extends React.Component {
         </View>
         <TouchableOpacity>
           <Ionicons
-            name={"ios-remove-circle-outline"}
+            name={"ios-checkmark-circle-outline"}
             size={28}
-            color={"red"}
+            color={"lightgreen"}
           />
         </TouchableOpacity>
       </View>
@@ -116,7 +126,7 @@ export default class ShoppingList extends React.Component {
           }}
         >
           <Text style={{ fontSize: 24, color: "#232b2e", fontWeight: "bold" }}>
-            SHOPPING LIST
+            SHELF
           </Text>
         </View>
         <FlatList
@@ -132,14 +142,14 @@ export default class ShoppingList extends React.Component {
           showBackground={false}
           floatingIcon={<Ionicons name={"ios-add"} size={28} color={"white"} />}
           onPressMain={() => {
-            this.setState({ visible: true });
+            this.setState({ showOverlay: true });
             console.log("Add new shopping item: ");
           }}
         />
         <Overlay
-          isVisible={this.state.visible}
+          isVisible={this.state.showOverlay}
           onBackdropPress={() => {
-            this.setState({ visible: false });
+            this.setState({ showOverlay: false });
           }}
         >
           <View
@@ -182,18 +192,38 @@ export default class ShoppingList extends React.Component {
                   style={{ marginRight: 28 }}
                 />
               }
-              containerStyle={{ marginBottom: height * 0.12 }}
+              containerStyle={{ marginBottom: height * 0.06 }}
             />
-            
             <Button
               containerStyle={{
                 width: width * 0.6,
+                marginBottom: height * 0.02
+              }}
+              title="Select Expiration Date"
+              onPress={() => {this.setState({showDatePicker: true})}}
+            />
+            <Button
+              containerStyle={{
+                width: width * 0.6
               }}
               title="Submit"
-              onPress={() => {}}
+              onPress={() => {this.setState({showOverlay: false})}}
             />
+            
+            
           </View>
         </Overlay>
+        {this.state.showDatePicker && (<DateTimePicker
+              testID="dateTimePicker"
+              value={this.state.date}
+              mode={"date"}
+              display="default"
+              onChange={(event,date)=>{
+                  this.setState({date: date, showDatePicker: false})
+              }}
+              minimumDate={Date.now()}
+              style={{ marginBottom: height * 0.12 }}
+            />)}
       </View>
     );
   }

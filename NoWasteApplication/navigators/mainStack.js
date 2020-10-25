@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import ProfileScreen from "../screens/profile.js";
 import ShoppingListScreen from "../screens/shoppingList.js";
+import ShelfScreen from "../screens/shelf.js"
 import { Ionicons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
@@ -30,7 +31,7 @@ export default function App() {
       })}
     >
       <Tab.Screen name="List" component={ShoppingListScreen} />
-      <Tab.Screen name="Shelf" component={ProfileScreen} />
+      <Tab.Screen name="Shelf" component={ShelfScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );

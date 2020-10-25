@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { Input } from "react-native-elements";
 import { Dimensions } from "react-native";
@@ -39,16 +39,10 @@ export default class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: "bold",
-            marginBottom: height * 0.02,
-            color: "#00c853",
-          }}
-        >
-          NOWASTE
-        </Text>
+        <Image
+          style={{ height: height * 0.18, width: height * 0.18, marginBottom: height*0.02 }}
+          source={require("../assets/icon.png")}
+        />
 
         <Input
           placeholder="Email"
@@ -91,9 +85,7 @@ export default class Login extends React.Component {
           title="Login with Google"
           onPress={() => {
             this.setState({ isLoggedIn: true });
-            this.props.navigation.dispatch(
-              StackActions.replace('MainStack')
-            );
+            this.props.navigation.dispatch(StackActions.replace("MainStack"));
           }}
         />
         <Button 

@@ -11,6 +11,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <NavigationContainer>
+      <StatusBar></StatusBar>
       <TopLevel />
     </NavigationContainer>
   );

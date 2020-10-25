@@ -15,7 +15,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import { Input, Button, Overlay } from "react-native-elements";
 import { FloatingAction } from "react-native-floating-action";
 import { StackActions } from "@react-navigation/native";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from "react-native-datepicker";
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
@@ -27,33 +27,31 @@ const Item = ({ name, quant }) => (
   </View>
 );
 
-
 export default class Shelf extends React.Component {
-    constructor(props){
-        super(props)
-        this.state={
-            data: [
-              {
-                id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-                name: "Tomato",
-                quantity: 3,
-              },
-              {
-                id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-                name: "Potato",
-                quantity: 2,
-              },
-              {
-                id: "58694a0f-3da1-471f-bd96-145571e29d72",
-                name: "Cucumber",
-                quantity: 1,
-              },
-            ],
-            showOverlay: false,
-            showDatePicker: false,
-            date: Date.now()
-          };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [
+        {
+          id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
+          name: "Tomato",
+          quantity: 3,
+        },
+        {
+          id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
+          name: "Potato",
+          quantity: 2,
+        },
+        {
+          id: "58694a0f-3da1-471f-bd96-145571e29d72",
+          name: "Cucumber",
+          quantity: 1,
+        },
+      ],
+      showOverlay: false,
+      date: new Date().toISOString().slice(0,10),
+    };
+  }
 
   renderItem = ({ item, number }) => (
     <View
@@ -159,13 +157,13 @@ export default class Shelf extends React.Component {
               height: height * 0.6,
               paddingVertical: height * 0.02,
               paddingHorizontal: width * 0.02,
+              justifyContent: "space-evenly"
             }}
           >
             <Text
               style={{
                 fontSize: 18,
                 fontWeight: "bold",
-                marginBottom: height * 0.12,
               }}
             >
               Add new item to the shopping list
@@ -192,38 +190,46 @@ export default class Shelf extends React.Component {
                   style={{ marginRight: 28 }}
                 />
               }
-              containerStyle={{ marginBottom: height * 0.06 }}
+            />
+            <DatePicker
+              style={{ width: 200 }}
+              date={this.state.date}
+              mode="date"
+              placeholder="Select Expiration Date"
+              format="YYYY-MM-DD"
+              minDate={new Date().toISOString().slice(0,10)}
+              confirmBtnText="Select"
+              cancelBtnText="Cancel"
+              customStyles={{
+                datePicker: {
+                    backgroundColor: '#d1d3d8',
+                    justifyContent:'center'
+                  },
+                dateIcon: {
+                  position: "absolute",
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0,
+                },
+                dateInput: {
+                  marginLeft: 36,
+                },
+              }}
+              onDateChange={(date) => {
+                this.setState({ date: date });
+              }}
             />
             <Button
               containerStyle={{
                 width: width * 0.6,
-                marginBottom: height * 0.02
-              }}
-              title="Select Expiration Date"
-              onPress={() => {this.setState({showDatePicker: true})}}
-            />
-            <Button
-              containerStyle={{
-                width: width * 0.6
               }}
               title="Submit"
-              onPress={() => {this.setState({showOverlay: false})}}
+              onPress={() => {
+                this.setState({ showOverlay: false });
+              }}
             />
-            
-            
           </View>
         </Overlay>
-        {this.state.showDatePicker && (<DateTimePicker
-              testID="dateTimePicker"
-              value={this.state.date}
-              mode={"date"}
-              display="default"
-              onChange={(event,date)=>{
-                  this.setState({date: date, showDatePicker: false})
-              }}
-              minimumDate={Date.now()}
-              style={{ marginBottom: height * 0.12 }}
-            />)}
       </View>
     );
   }

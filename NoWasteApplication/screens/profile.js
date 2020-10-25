@@ -6,11 +6,19 @@ import { Input } from "react-native-elements";
 import { Dimensions } from "react-native";
 import { Button } from "react-native-elements";
 import { StackActions } from '@react-navigation/native';
+import Firebase from '../config/Firebase';
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
-export default class Login extends React.Component {
+export default class Profile extends React.Component {
+
+  handleSignout = () => {
+    Firebase.auth().signOut()
+    .then(() => {this.props.navigation.navigate('Login')})
+    .catch(error=>console.log(error))
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -18,11 +26,7 @@ export default class Login extends React.Component {
         <Button
           containerStyle={{ width: width * 0.6 }}
           title="Logout"
-          onPress={() => {
-            this.props.navigation.dispatch(
-              StackActions.replace('LoginStack')
-            );
-          }}
+          onPress={this.handleSignout}
         />
 
         <StatusBar style="auto" />

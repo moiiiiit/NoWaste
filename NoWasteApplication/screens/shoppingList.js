@@ -4,16 +4,9 @@ import { StyleSheet, Text, View, FlatList, Dimensions, SafeAreaView } from "reac
 import Icon from "react-native-vector-icons/AntDesign";
 import { Input, Button, ListItem } from "react-native-elements";
 import { StackActions } from "@react-navigation/native";
-import { Left, Right } from "native-base";
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
-
-const Item = ({ name,quant }) => (
-  <View>
-    <Text>{name} {quant}</Text>
-  </View>
-);
 
 export default class Login extends React.Component {
 
@@ -37,17 +30,25 @@ export default class Login extends React.Component {
     ],
   };
 
-  renderItem = ({ item }) => (
-    <ListItem 
-    bottomDivider={true}>
-      <Left style={{flex: 1.0}}>
+  renderItem = ({ item, number }) => (
+    <View
+      style={{
+        backgroundColor: "#fff",
+        paddingHorizontal: width * 0.04,
+        paddingVertical: height * 0.02,
+        borderBottomWidth: 1,
+        borderColor: "lightgrey",
+        flexDirection: "row",
+        justifyContent: "space-between",
+      }}
+    >
+      <View>
         <Text>{item.name}</Text>
-      </Left>
-      <Right style={{flex: 1.0}}>
-        <Text>{item.quantity}</Text>
-      </Right>
-    </ListItem>
-  )
+        <Text style={{ color: "grey" }}>Quantity: {item.quantity}</Text>
+      </View>
+
+    </View>
+  );
 
   render() {
     return (

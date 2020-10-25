@@ -7,6 +7,7 @@ import { Dimensions } from "react-native";
 import { Button } from "react-native-elements";
 import { StackActions } from "@react-navigation/native";
 import Firebase from "../config/Firebase";
+import * as SecureStore from 'expo-secure-store';
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -17,16 +18,20 @@ Firebase.auth().onAuthStateChanged((user) => {
   if (user != null) {
     console.log("We are authenticated now!");
     isLoggedIn = true;
+    SecureStore.setItemAsync('user', JSON.stringify(user));
     return;
   }
 });
 
 export default class Login extends React.Component {
-  state = {
-    name: "",
-    email: "",
-    password: "",
-  };
+  constructor(props){
+    super(props)
+    this.state = {
+      name: "",
+      email: "",
+      password: "",
+    };
+  }
 
   async handleLogin() {
     const { email, password } = this.state;

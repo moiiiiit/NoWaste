@@ -8,7 +8,7 @@ import { Dimensions } from "react-native";
 import { Button } from "react-native-elements";
 import { StackActions } from '@react-navigation/native';
 import Firebase from '../config/Firebase';
-
+import * as SecureStore from 'expo-secure-store';
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
@@ -18,6 +18,11 @@ export default class Profile extends React.Component {
     Firebase.auth().signOut()
     .then(() => {this.props.navigation.navigate('Login')})
     .catch(error=>console.log(error))
+    this.deleteUser()
+  }
+
+  async deleteUser(){
+    await SecureStore.deleteItemAsync('user')
   }
 
   render() {

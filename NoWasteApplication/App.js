@@ -1,11 +1,11 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View, LogBox } from "react-native";
+import { StyleSheet, Text, View, LogBox, YellowBox } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import TopLevel from "./navigators/toplevel.js";
-
-LogBox.ignoreAllLogs(true)
+LogBox.ignoreAllLogs(true);
+YellowBox.ignoreWarnings([""]);
 const Tab = createBottomTabNavigator();
 
 export default function App() {

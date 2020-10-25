@@ -13,9 +13,10 @@ import { Input, Button, Overlay } from "react-native-elements";
 import { FloatingAction } from "react-native-floating-action";
 import { StackActions } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import Firebase from "../config/Firebase";
+import * as SecureStore from 'expo-secure-store';
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
-
 const Item = ({ name, quant }) => (
   <View>
     <Text>
@@ -25,26 +26,42 @@ const Item = ({ name, quant }) => (
 );
 
 export default class ShoppingList extends React.Component {
-  state = {
-    data: [
+
+  constructor(props){
+    super(props)
+    this.state={data: [
       {
         id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
         name: "Tomato",
         quantity: 3,
       },
-      {
-        id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-        name: "Potato",
-        quantity: 2,
-      },
-      {
-        id: "58694a0f-3da1-471f-bd96-145571e29d72",
-        name: "Cucumber",
-        quantity: 1,
-      },
     ],
+    loading: true,
     visible: false,
-  };
+  user:{}}
+    this.created()
+  }
+
+  created(){
+    let penisid = Firebase.auth().currentUser.uid;
+    this.getTodos(penisid)
+  }
+
+  async getTodos(penisid) {
+    var todosRef = await Firebase
+        .firestore()
+        .collection("users")
+        .doc(penisid)
+        .collection('shopping_list')
+        .get()
+        .then((snapshot)=>{
+          snapshot.docs.forEach(doc => {
+            console.log(doc.data());
+          })
+        })
+
+    console.log(todosRef);
+}
 
   renderItem = ({ item, number }) => (
     <View
@@ -190,7 +207,15 @@ export default class ShoppingList extends React.Component {
                 width: width * 0.6,
               }}
               title="Submit"
-              onPress={() => {}}
+              onPress={() => {Firebase
+                .firestore()
+                .collection("users")
+                .doc(Firebase.auth().currentUser.uid)
+                .collection("shopping_list")
+                .doc('somepenisid')
+                .set({
+                  name:'grapes',
+                  quantity:42069})}}
             />
           </View>
         </Overlay>

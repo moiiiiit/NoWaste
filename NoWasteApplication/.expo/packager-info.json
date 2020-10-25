@@ -1,9 +1,10 @@
 {
-  "devToolsPort": 19002,
+  "expoServerNgrokUrl": "https://ph-yqh.aerongcanlas.nowasteapplication.exp.direct",
+  "packagerNgrokUrl": "https://packager.ph-yqh.aerongcanlas.nowasteapplication.exp.direct",
+  "ngrokPid": 464,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 9196,
-  "expoServerNgrokUrl": "https://9k-qnq.aerongcanlas.nowasteapplication.exp.direct",
-  "packagerNgrokUrl": "https://packager.9k-qnq.aerongcanlas.nowasteapplication.exp.direct",
-  "ngrokPid": 15200
+  "packagerPid": 21180,
+  "webpackServerPort": null,
+  "devToolsPort": 19002
 }

@@ -13,7 +13,6 @@ export default function  MyStack() {
     <Stack.Navigator style={{backgroundColor: "#fff"}}>
       <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
       <Stack.Screen name="Signup" component={Signup} options={{headerShown:false}}/>
-      <Stack.Screen name="Profile" component={Profile} options={{headerShown:false}}/>
       <Stack.Screen name="MainStack" component={MainStack} options={{headerShown:false}}/>
     </Stack.Navigator>
   );

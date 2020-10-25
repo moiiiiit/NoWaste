@@ -15,6 +15,8 @@ import Icon from "react-native-vector-icons/AntDesign";
 import { Input, Button, Overlay } from "react-native-elements";
 import { FloatingAction } from "react-native-floating-action";
 import { StackActions } from "@react-navigation/native";
+import Firebase from "../config/Firebase";
+import * as SecureStore from "expo-secure-store";
 import DatePicker from "react-native-datepicker";
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
@@ -27,30 +29,44 @@ const Item = ({ name, quant }) => (
   </View>
 );
 
+const generateRandomString = (length = 12) =>
+  Math.random().toString(20).substr(2, length);
+
 export default class Shelf extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [
-        {
-          id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-          name: "Tomato",
-          quantity: 3,
-        },
-        {
-          id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-          name: "Potato",
-          quantity: 2,
-        },
-        {
-          id: "58694a0f-3da1-471f-bd96-145571e29d72",
-          name: "Cucumber",
-          quantity: 1,
-        },
-      ],
+      data: [],
+      newItemName: "",
+      newItemQuantity: "",
       showOverlay: false,
-      date: new Date().toISOString().slice(0,10),
+      date: new Date().toISOString().slice(0, 10),
     };
+    this.penisid = Firebase.auth().currentUser.uid;
+    this.created(this.penisid);
+  }
+
+  created(penisid) {
+    
+    this.getTodos(penisid);
+  }
+
+  async getTodos(penisid) {
+    var todosRef = await Firebase.firestore()
+      .collection("users")
+      .doc(penisid)
+      .collection("inventory")
+      .get()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          // let temp = doc.data()
+          // this.data.push(temp);
+          // console.log(doc.data());
+          this.state.data.push(Object.assign({uid: doc.id}, doc.data()));
+        });
+      });
+    this.setState({});
+    console.log(this.state.data);
   }
 
   renderItem = ({ item, number }) => (
@@ -68,7 +84,7 @@ export default class Shelf extends React.Component {
       <View>
         <Text>{item.name}</Text>
         <Text style={{ color: "grey" }}>Quantity: {item.quantity}</Text>
-        <Text style={{ color: "grey" }}>20 June 1999</Text>
+        <Text style={{ color: "grey" }}>Expiry Date: {item.exp_date}</Text>
       </View>
 
       <View
@@ -79,7 +95,7 @@ export default class Shelf extends React.Component {
           flex: 0,
         }}
       >
-        <View
+        {/* <View
           style={{
             width: 70,
             justifyContent: "center",
@@ -101,8 +117,27 @@ export default class Shelf extends React.Component {
             }}
             value={number}
           />
-        </View>
-        <TouchableOpacity>
+        </View> */}
+        <TouchableOpacity
+          onPress={async () => {
+            await Firebase.firestore()
+              .collection("users")
+              .doc(this.penisid)
+              .collection("inventory")
+              .doc(item.uid)
+              .delete()
+              .then(function () {
+                console.log("Document successfully deleted!");
+              })
+              .catch(function (error) {
+                console.error("Error removing document: ", error);
+              });
+
+              this.props.navigation.dispatch(
+                StackActions.replace("MainStack", { screen: "Shelf" })
+              );
+          }}
+        >
           <Ionicons
             name={"ios-checkmark-circle-outline"}
             size={28}
@@ -128,7 +163,7 @@ export default class Shelf extends React.Component {
           </Text>
         </View>
         <FlatList
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => index.toString()}
           data={this.state.data}
           renderItem={this.renderItem}
         />
@@ -157,7 +192,7 @@ export default class Shelf extends React.Component {
               height: height * 0.6,
               paddingVertical: height * 0.02,
               paddingHorizontal: width * 0.02,
-              justifyContent: "space-evenly"
+              justifyContent: "space-evenly",
             }}
           >
             <Text
@@ -166,7 +201,7 @@ export default class Shelf extends React.Component {
                 fontWeight: "bold",
               }}
             >
-              Add new item to the shopping list
+              Add new item to the shelf (your pantry)
             </Text>
 
             <Input
@@ -179,9 +214,11 @@ export default class Shelf extends React.Component {
                   style={{ marginRight: 28 }}
                 />
               }
+              onChangeText={(value) => this.setState({ newItemName: value })}
             />
             <Input
               placeholder="Quantity"
+              keyboardType="number-pad"
               leftIcon={
                 <Ionicons
                   name="ios-arrow-round-forward"
@@ -190,6 +227,9 @@ export default class Shelf extends React.Component {
                   style={{ marginRight: 28 }}
                 />
               }
+              onChangeText={(value) =>
+                this.setState({ newItemQuantity: value })
+              }
             />
             <DatePicker
               style={{ width: 200 }}
@@ -197,14 +237,14 @@ export default class Shelf extends React.Component {
               mode="date"
               placeholder="Select Expiration Date"
               format="YYYY-MM-DD"
-              minDate={new Date().toISOString().slice(0,10)}
+              minDate={new Date().toISOString().slice(0, 10)}
               confirmBtnText="Select"
               cancelBtnText="Cancel"
               customStyles={{
                 datePicker: {
-                    backgroundColor: '#d1d3d8',
-                    justifyContent:'center'
-                  },
+                  backgroundColor: "#d1d3d8",
+                  justifyContent: "center",
+                },
                 dateIcon: {
                   position: "absolute",
                   left: 0,
@@ -226,6 +266,19 @@ export default class Shelf extends React.Component {
               title="Submit"
               onPress={() => {
                 this.setState({ showOverlay: false });
+                Firebase.firestore()
+                  .collection("users")
+                  .doc(Firebase.auth().currentUser.uid)
+                  .collection("inventory")
+                  .doc(Math.random().toString(20).substr(2, 12))
+                  .set({
+                    name: this.state.newItemName,
+                    quantity: this.state.newItemQuantity,
+                    exp_date: this.state.date,
+                  });
+                this.props.navigation.dispatch(
+                  StackActions.replace("MainStack", { screen: "Shelf" })
+                );
               }}
             />
           </View>

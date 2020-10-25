@@ -14,7 +14,7 @@ import { FloatingAction } from "react-native-floating-action";
 import { StackActions } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Firebase from "../config/Firebase";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 const Item = ({ name, quant }) => (
@@ -24,44 +24,42 @@ const Item = ({ name, quant }) => (
     </Text>
   </View>
 );
+const generateRandomString = (length = 12) =>
+  Math.random().toString(20).substr(2, length);
 
 export default class ShoppingList extends React.Component {
-
-  constructor(props){
-    super(props)
-    this.state={data: [
-      {
-        id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-        name: "Tomato",
-        quantity: 3,
-      },
-    ],
-    loading: true,
-    visible: false,
-  user:{}}
-    this.created()
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      loading: true,
+      visible: false,
+      newItemName: "",
+      newItemQuantity: "",
+      user: {},
+    };
+    this.penisid = Firebase.auth().currentUser.uid;
+    this.created(this.penisid);
   }
 
-  created(){
-    let penisid = Firebase.auth().currentUser.uid;
-    this.getTodos(penisid)
+  created(penisid) {
+    this.getTodos(penisid);
   }
 
   async getTodos(penisid) {
-    var todosRef = await Firebase
-        .firestore()
-        .collection("users")
-        .doc(penisid)
-        .collection('shopping_list')
-        .get()
-        .then((snapshot)=>{
-          snapshot.docs.forEach(doc => {
-            console.log(doc.data());
-          })
-        })
-
-    console.log(todosRef);
-}
+    var todosRef = await Firebase.firestore()
+      .collection("users")
+      .doc(penisid)
+      .collection("shopping_list")
+      .get()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          this.state.data.push(Object.assign({uid: doc.id}, doc.data()));
+        });
+      });
+    this.setState({});
+    console.log(this.state.data);
+  }
 
   renderItem = ({ item, number }) => (
     <View
@@ -88,7 +86,7 @@ export default class ShoppingList extends React.Component {
           flex: 0,
         }}
       >
-        <View
+        {/* <View
           style={{
             width: 70,
             justifyContent: "center",
@@ -110,8 +108,36 @@ export default class ShoppingList extends React.Component {
             }}
             value={number}
           />
-        </View>
-        <TouchableOpacity>
+        </View> */}
+
+        {/* <TouchableOpacity
+              onPress={() => {
+              }}
+            >
+              <Ionicons
+                name={"ios-checkmark-circle-outline"}
+                size={28}
+                color={"lightgreen"}
+                style={{ marginRight: width * 0.04 }}
+              />
+            </TouchableOpacity> */}
+        <TouchableOpacity
+          onPress={async () => {
+            await Firebase.firestore().collection("users")
+              .doc(this.penisid).collection("shopping_list").doc(item.uid)
+              .delete()
+              .then(function () {
+                console.log("Document successfully deleted!");
+              })
+              .catch(function (error) {
+                console.error("Error removing document: ", error);
+              });
+
+            this.props.navigation.dispatch(
+              StackActions.replace("MainStack")
+            );
+          }}
+        >
           <Ionicons
             name={"ios-remove-circle-outline"}
             size={28}
@@ -137,7 +163,7 @@ export default class ShoppingList extends React.Component {
           </Text>
         </View>
         <FlatList
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.uid}
           data={this.state.data}
           renderItem={this.renderItem}
         />
@@ -188,9 +214,11 @@ export default class ShoppingList extends React.Component {
                   style={{ marginRight: 28 }}
                 />
               }
+              onChangeText={(value) => this.setState({ newItemName: value })}
             />
             <Input
               placeholder="Quantity"
+              keyboardType="number-pad"
               leftIcon={
                 <Ionicons
                   name="ios-arrow-round-forward"
@@ -199,23 +227,31 @@ export default class ShoppingList extends React.Component {
                   style={{ marginRight: 28 }}
                 />
               }
+              onChangeText={(value) =>
+                this.setState({ newItemQuantity: value })
+              }
               containerStyle={{ marginBottom: height * 0.12 }}
             />
-            
+
             <Button
               containerStyle={{
                 width: width * 0.6,
               }}
               title="Submit"
-              onPress={() => {Firebase
-                .firestore()
-                .collection("users")
-                .doc(Firebase.auth().currentUser.uid)
-                .collection("shopping_list")
-                .doc('somepenisid')
-                .set({
-                  name:'grapes',
-                  quantity:42069})}}
+              onPress={() => {
+                Firebase.firestore()
+                  .collection("users")
+                  .doc(Firebase.auth().currentUser.uid)
+                  .collection("shopping_list")
+                  .doc(Math.random().toString(20).substr(2, 12))
+                  .set({
+                    name: this.state.newItemName,
+                    quantity: this.state.newItemQuantity,
+                  });
+                this.props.navigation.dispatch(
+                  StackActions.replace("MainStack")
+                );
+              }}
             />
           </View>
         </Overlay>
